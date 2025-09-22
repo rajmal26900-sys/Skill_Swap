@@ -1,0 +1,56 @@
+{% load static %}
+<div class="courses-grid">
+  <div class="row">
+    {% for skill in page_obj %}
+      <div class="{{ column_classes|default:'col-lg-6 col-md-6' }} course-item pb-4"
+           data-category="{{ skill.category.id }}"
+           data-skill-name="{{ skill.name|lower }}"
+           data-category-name="{{ skill.category.name|lower }}">
+        <div class="course-card">
+          <div class="course-image">
+            {% if skill.image %}
+              <img src="{{ skill.image.url }}" alt="{{ skill.name }}" class="img-fluid">
+            {% else %}
+              <img src="{% static 'assets/img/education/courses-3.webp' %}" alt="{{ skill.name }}" class="img-fluid">
+            {% endif %}
+            <div class="course-badge">{{ skill.category.name }}</div>
+          </div>
+          <div class="course-content">
+            <div class="course-meta">
+              <span class="category">{{ skill.category.name }}</span>
+              <span class="level">{{ skill.get_level_display }}</span>
+            </div>
+            <h3>{{ skill.name }}</h3>
+            <p>{{ skill.description|truncatewords:20 }}</p>
+            <div class="course-stats">
+              <div class="stat"><i class="bi bi-calendar"></i>
+                <span>Added {{ skill.created_at|date:"M d, Y" }}</span>
+              </div>
+              <div class="stat"><i class="bi bi-people"></i>
+                <span>Learn this skill</span>
+              </div>
+            </div>
+            {% if skill.user_skills.first %}
+            <p class="teacher-name mt-3 p-2 bg-light rounded d-inline-block shadow-sm">
+              <i class="bi bi-person text-primary"></i>
+              <strong>Student:</strong> {{ skill.user_skills.first.user.first_name }} {{ skill.user_skills.first.user.last_name }}
+            </p>
+            {% endif %}
+            <a href="{% url 'category_skills:course_details' skill.id %}" class="btn-course">Course Details -> </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="text-center py-5">
+          <h4>No skills available at the moment</h4>
+          <p>Please check back later for new courses and skills.</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+{% include "include/pagination.html" %}
+
